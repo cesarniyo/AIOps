@@ -4,8 +4,8 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  use_case = "aff"
-  product  = "webapp"
+  use_case = "test"
+  product  = "aiops"
 
   account_id    = data.aws_caller_identity.current.account_id
   region        = "us-east-2"
