@@ -1,0 +1,26 @@
+name: "Terraform Build"
+description: "Runs Terraform initialization and validation"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_wrapper: true
+        terraform_version: 1.8.0
+        cli_config_credentials_token: ${{ env.TF_API_TOKEN }}
+
+    - name: Terraform Init
+      run: |
+        cd ${{ env.TERRAFORM_DIRECTORY }}
+        terraform init -backend-config=envs/dev.backend.conf
+      shell: bash
+
+    - name: Terraform Format Check
+      run: terraform fmt -check
+      shell: bash
+
+    - name: Terraform Validate
+      run: terraform validate -no-color
+      shell: bash

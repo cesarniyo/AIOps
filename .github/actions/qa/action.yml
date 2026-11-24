@@ -1,0 +1,43 @@
+name: "Deploy to QA"
+description: "Deploys Terraform changes to QA environment"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+        aws-region: ${{ env.AWS_REGION }}
+        role-session-name: qa-session
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_wrapper: true
+        terraform_version: 1.8.0
+        cli_config_credentials_token: ${{ env.TF_API_TOKEN }}
+
+    - name: Terraform Init
+      run: |
+        cd ${{ env.TERRAFORM_DIRECTORY }}
+        terraform init -backend-config=envs/qa.backend.conf
+      shell: bash
+
+    - name: Terraform Plan
+      run: |
+        cd ${{ env.TERRAFORM_DIRECTORY }}
+        terraform plan
+      shell: bash
+
+    - name: Terraform Apply
+      run: |
+        cd ${{ env.TERRAFORM_DIRECTORY }}
+        terraform apply -auto-approve
+      shell: bash
+
+    # - name: Terraform Destroy
+    #   run: |
+    #     cd ${{ env.TERRAFORM_DIRECTORY }}
+    #     terraform destroy -auto-approve
+    #   shell: bash  

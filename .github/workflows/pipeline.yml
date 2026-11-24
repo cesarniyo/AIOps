@@ -1,0 +1,99 @@
+name: Terraform Re-usable pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      dev:
+        description: "Deploy dev"
+        required: false
+        type: boolean
+        default: false
+      qa:
+        description: "Deploy qa"
+        required: false
+        type: boolean
+        default: false
+      prd:
+        description: "Deploy prd"
+        required: false
+        type: boolean
+        default: false
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+env:
+  AWS_REGION: "us-east-2"
+  ROLE_TO_ASSUME: "arn:aws:iam::927765266034:role/dealstands-dev-oidc"# Has to be team token not enterprise one
+  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+  TERRAFORM_DIRECTORY: "terraform"
+
+
+jobs: 
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    outputs:
+      init_outcome: ${{ steps.init.outcome }}
+      fmt_outcome: ${{ steps.fmt.outcome }}
+      validate_outcome: ${{ steps.validate.outcome }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3 
+
+      - name: Run Build Action
+        uses:  ./.github/actions/build      
+
+
+
+  dev:
+    if: ${{ (github.event.inputs.dev && github.event.inputs.dev == 'true') || github.ref == 'refs/heads/main' }}
+    needs: [build]
+    name: Deploy to Dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3 
+
+      - name: Run Dev Action
+        uses:  ./.github/actions/dev      
+
+
+
+
+  # ===============================QA and PRD stages are commented out for now===============================
+  # qa:
+  #   if: ${{ (github.event.inputs.qa && github.event.inputs.qa == 'true') || github.ref == 'refs/heads/main' }}
+  #   needs: [build, dev]
+  #   name: Deploy to QA
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3 
+
+  #     - name: Run QA Action
+  #       uses:  ./.github/actions/qa      
+
+
+
+  # prd:
+  #   if: ${{ github.ref == 'refs/heads/main' }}
+  #   needs: [build, dev, qa]
+  #   name: Deploy to Production
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3 
+
+  #     - name: Run Production Action
+  #       uses:  ./.github/actions/prd
+
