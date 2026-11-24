@@ -19,37 +19,6 @@
 
 
 
-variable "rds_password" {
-  type      = string
-  sensitive = true
-}
-
-variable "django_app_secret_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "stripe_public_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "stripe_secret_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "email_host_user" {
-  type      = string
-  sensitive = true
-}
-
-variable "email_host_password" {
-  type      = string
-  sensitive = true
-}
-
-
 variable "my_home_ip_cidr" {
   type = string
 }
