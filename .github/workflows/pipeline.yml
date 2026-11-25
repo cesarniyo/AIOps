@@ -72,7 +72,7 @@ jobs:
         with:
           role_to_assume: ${{ env.ROLE_TO_ASSUME }}
           aws_region: ${{ env.AWS_REGION }}
-          ecr_repository: "dev-flask-books-app"
+          ecr_repository: "test-aiops-use2-flask-books-app"
           cluster_name: "test-aiops-use2-eks"
           deployment_name: "flask-app"
           container_name: "flask-app"
