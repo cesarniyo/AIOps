@@ -67,17 +67,17 @@ jobs:
       - name: Run Dev Action
         uses:  ./.github/actions/dev      
 
-      # - name: Deploy App to EKS
-      #   uses: ./.github/actions/deploy-on-eks
-      #   with:
-      #     role_to_assume: ${{ env.ROLE_TO_ASSUME }}
-      #     aws_region: ${{ env.AWS_REGION }}
-      #     ecr_repository: "dev-flask-books-app"
-      #     cluster_name: "test-aiops-use2-eks"
-      #     deployment_name: "flask-app"
-      #     container_name: "flask-app"
-      #     app_directory: "Flask-app"
-      #     k8s_manifests_dir: "Flask-app/kube-app-postgres"
+      - name: Deploy App to EKS
+        uses: ./.github/actions/deploy-on-eks
+        with:
+          role_to_assume: ${{ env.ROLE_TO_ASSUME }}
+          aws_region: ${{ env.AWS_REGION }}
+          ecr_repository: "dev-flask-books-app"
+          cluster_name: "test-aiops-use2-eks"
+          deployment_name: "flask-app"
+          container_name: "flask-app"
+          app_directory: "Flask-app"
+          k8s_manifests_dir: "Flask-app/kube-app-postgres"
 
 
 

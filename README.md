@@ -7,7 +7,7 @@
 1. Install Required CLI Tools (If Not Already Installed)
 • AWS CLI v2
 • kubectl: Used to inspect nodes, deploy containers, and check logs inside Kubernetes.
-
+           (sudo snap install kubectl --classic)
 2. Configure Your test-user Credentials Locally
 aws configure
 	• AWS Access Key ID: <your-test-user-access-key>
@@ -24,7 +24,6 @@ aws eks update-kubeconfig --region us-east-2 --name test-aiops-use2-eks
 4. Run Your First kubectl Commands
 kubectl cluster-info
 kubectl get namespaces
-Use code with caution.
 kubectl get nodes
 kubectl get pods -A
 
