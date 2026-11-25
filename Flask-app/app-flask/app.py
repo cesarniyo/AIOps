@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, url_for, redirect
 app = Flask(__name__)
 
 def get_db_connection():
-    conn = psycopg2.connect(host='localhost', #'postgres-service',
+    conn = psycopg2.connect(host=os.environ['POSTGRES_HOST'],
                             port = '5432',
                             database=os.environ['POSTGRES_DB'],
                             user=os.environ['POSTGRES_USER'],

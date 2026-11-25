@@ -40,3 +40,7 @@ kubectl get services
 # View live container logs or open a shell inside a pod
 kubectl logs <pod-name>
 kubectl exec -it <pod-name> -- /bin/sh
+
+# View you application
+kubectl get svc flask-app-service (glab the <EXTERNAL-IP> )
+Open http://<EXTERNAL-IP> in your browser.
