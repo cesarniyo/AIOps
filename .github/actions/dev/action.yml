@@ -36,8 +36,8 @@ runs:
         terraform apply -auto-approve
       shell: bash
 
-    - name: Terraform Destroy
-      run: |
-        cd ${{ env.TERRAFORM_DIRECTORY }}
-        terraform destroy -auto-approve
-      shell: bash      
+    # - name: Terraform Destroy
+    #   run: |
+    #     cd ${{ env.TERRAFORM_DIRECTORY }}
+    #     terraform destroy -auto-approve
+    #   shell: bash      

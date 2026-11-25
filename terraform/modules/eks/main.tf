@@ -33,7 +33,7 @@ resource "aws_eks_node_group" "this" {
 # Grant your personal IAM user cluster-admin access for Console & local kubectl
 resource "aws_eks_access_entry" "personal_admin" {
   cluster_name  = aws_eks_cluster.this.name
-  principal_arn = "arn:aws:iam::927765266034:user/test-user"
+  principal_arn = "arn:aws:iam::927765266034:user/automation-user"
   type          = "STANDARD"
 }
 

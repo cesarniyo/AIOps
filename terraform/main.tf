@@ -17,6 +17,15 @@ module "network" {
   bastion_public_key_string = var.bastion_public_key_string
 }
 
+
+# -----------------------------------------------------------
+# ECR Repository
+# -----------------------------------------------------------
+module "ecr" {
+  source          = "./modules/ecr"
+  repository_name = "${local.name_prefix}-flask-books-app"
+}
+
 # -----------------------------------------------------------
 # DB Creation: RDS
 # -----------------------------------------------------------

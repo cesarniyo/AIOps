@@ -1,0 +1,72 @@
+name: "Build and Deploy App to EKS"
+description: "Builds Docker image, pushes to Amazon ECR, and deploys manifests to Amazon EKS"
+
+inputs:
+  role_to_assume:
+    description: "AWS IAM Role ARN for OIDC authentication"
+    required: true
+  aws_region:
+    description: "AWS Region"
+    required: true
+  ecr_repository:
+    description: "Amazon ECR repository name"
+    required: true
+  cluster_name:
+    description: "Target Amazon EKS cluster name"
+    required: true
+  deployment_name:
+    description: "Kubernetes Deployment metadata name"
+    required: false
+    default: "flask-app"
+  container_name:
+    description: "Kubernetes Deployment container name"
+    required: false
+    default: "flask-app"
+  app_directory:
+    description: "Path to the directory containing the Dockerfile"
+    required: false
+    default: "."
+  k8s_manifests_dir:
+    description: "Path to the directory containing Kubernetes YAML files"
+    required: false
+    default: "kube-app-postgres"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.role_to_assume }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push image to Amazon ECR
+      shell: bash
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ${{ inputs.app_directory }}
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+    - name: Deploy to Amazon EKS
+      shell: bash
+      env:
+        CLUSTER_NAME: ${{ inputs.cluster_name }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+        IMAGE_TAG: ${{ github.sha }}
+        MANIFESTS_DIR: ${{ inputs.k8s_manifests_dir }}
+      run: |
+        aws eks update-kubeconfig --region ${{ inputs.aws_region }} --name $CLUSTER_NAME
+        kubectl apply -f $MANIFESTS_DIR/app-postgres-secret.yaml
+        kubectl apply -f $MANIFESTS_DIR/app-postgres-config.yaml
+        kubectl apply -f $MANIFESTS_DIR/app-deploy-service.yaml
+        kubectl set image deployment/${{ inputs.deployment_name }} ${{ inputs.container_name }}=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        kubectl rollout status deployment/${{ inputs.deployment_name }}
