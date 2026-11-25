@@ -39,3 +39,8 @@ variable "max_size" {
   default = 3
 }
 
+variable "kubernetes_version" {
+  description = "Kubernetes version for the EKS control plane and worker nodes"
+  type        = string
+  default     = "1.37"
+}
