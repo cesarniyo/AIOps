@@ -3,14 +3,16 @@ import psycopg2
 
 # os.environ['POSTGRES_URL'], 
 conn = psycopg2.connect(
-        host='localhost', #'postgres-service',
-        port = '5432',
-        database="flask_db",
-        user=os.environ['POSTGRES_USER'],
-        password=os.environ['POSTGRES_PASSWORD'])
+    host=os.environ['POSTGRES_HOST'],
+    port=os.environ.get('POSTGRES_PORT', '5432'),
+    database=os.environ['POSTGRES_DB'],
+    user=os.environ['POSTGRES_USER'],
+    password=os.environ['POSTGRES_PASSWORD']
+)
 
 # Open a cursor to perform database operations
 cur = conn.cursor()
+
 
 # Execute a command: this creates a new table
 cur.execute('DROP TABLE IF EXISTS books;')

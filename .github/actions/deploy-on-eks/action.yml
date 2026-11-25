@@ -70,3 +70,4 @@ runs:
         kubectl apply -f $MANIFESTS_DIR/app-deploy-service.yaml
         kubectl set image deployment/${{ inputs.deployment_name }} ${{ inputs.container_name }}=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         kubectl rollout status deployment/${{ inputs.deployment_name }}
+        kubectl exec deployment/${{ inputs.deployment_name }} -- python /app/app-flask/init_db.py
