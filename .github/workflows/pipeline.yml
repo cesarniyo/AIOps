@@ -64,8 +64,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3 
 
-      - name: Run Dev Action
-        uses:  ./.github/actions/dev      
+      # - name: Run Dev Action
+      #   uses:  ./.github/actions/dev      
 
       # - name: Deploy App to EKS
       #   uses: ./.github/actions/deploy-on-eks
